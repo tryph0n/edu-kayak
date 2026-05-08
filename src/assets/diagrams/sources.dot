@@ -1,0 +1,107 @@
+digraph KayakSources {
+    rankdir=TB;
+    bgcolor=transparent;
+    fontname="Helvetica";
+    fontsize=14;
+    labelloc="t";
+    label=<<B>External Data Sources &amp; GDPR Posture</B>>;
+    nodesep=0.8;
+    ranksep=1.0;
+    margin="0.5";
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11];
+    edge [fontname="Helvetica", fontsize=10, color="#444444"];
+
+    subgraph cluster_sources {
+        label=<<B>External Sources</B>>;
+        style="rounded,dashed";
+        color="#C99A2E";
+        fontcolor="#8A6A1F";
+        fontname="Helvetica";
+        fontsize=12;
+        margin=12;
+
+        nominatim [
+            label=<<B>Nominatim</B><BR/>Geocoding>,
+            shape=oval, fillcolor="#FFE9B3", color="#C99A2E"
+        ];
+        openweather [
+            label=<<B>OpenWeatherMap</B><BR/>Weather forecasts>,
+            shape=oval, fillcolor="#FFC98A", color="#C9722E"
+        ];
+        booking [
+            label=<<B>Booking.com</B><BR/>Hotel listings>,
+            shape=oval, fillcolor="#F5A097", color="#B23A2E"
+        ];
+    }
+
+    subgraph cluster_clients {
+        label=<<B>Python Clients</B>>;
+        style="rounded,filled";
+        fillcolor="#EAF2FB";
+        color="#3B7DD8";
+        fontcolor="#1F4E8C";
+        fontname="Helvetica";
+        fontsize=12;
+        margin=14;
+
+        geo_client [
+            label=<<B>GeocodingClient</B>>,
+            fillcolor="#CFE2F8", color="#3B7DD8"
+        ];
+        weather_client [
+            label=<<B>WeatherClient</B>>,
+            fillcolor="#CFE2F8", color="#3B7DD8"
+        ];
+        booking_spider [
+            label=<<B>BookingSpider</B>>,
+            fillcolor="#CFE2F8", color="#3B7DD8"
+        ];
+    }
+
+    s3_raw [
+        label=<<B>S3 Data Lake</B><BR/>Raw zone>,
+        shape=cylinder, fillcolor="#CFE9D7", color="#2E8B57", fontcolor="#1F5E3B"
+    ];
+
+    subgraph cluster_rgpd {
+        label=<<B>GDPR Safeguards</B>>;
+        style="rounded,filled";
+        fillcolor="#E8F5EC";
+        color="#2E8B57";
+        fontcolor="#1F5E3B";
+        fontname="Helvetica";
+        fontsize=12;
+        margin=14;
+
+        rgpd_pii [
+            label="Public data only",
+            fillcolor="#C7E8D2", color="#2E8B57"
+        ];
+        rgpd_rate [
+            label="Rate limiting",
+            fillcolor="#C7E8D2", color="#2E8B57"
+        ];
+        rgpd_ua [
+            label="Custom User-Agent",
+            fillcolor="#C7E8D2", color="#2E8B57"
+        ];
+        rgpd_robots [
+            label="robots.txt compliance",
+            fillcolor="#C7E8D2", color="#2E8B57"
+        ];
+
+        rgpd_pii -> rgpd_rate [style=invis];
+        rgpd_rate -> rgpd_ua [style=invis];
+        rgpd_ua -> rgpd_robots [style=invis];
+    }
+
+    nominatim   -> geo_client     [label="REST API"];
+    openweather -> weather_client [label="REST API"];
+    booking     -> booking_spider [label="HTML scraping"];
+
+    geo_client     -> s3_raw [color="#2E8B57"];
+    weather_client -> s3_raw [color="#2E8B57"];
+    booking_spider -> s3_raw [color="#2E8B57"];
+
+}

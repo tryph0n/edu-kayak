@@ -1,0 +1,107 @@
+digraph KayakArchitecture {
+    rankdir=TB;
+    bgcolor=transparent;
+    fontname="Helvetica";
+    fontsize=14;
+    labelloc="t";
+    label=<<B>Kayak Travel Recommender -- Data Lake + Data Warehouse</B>>;
+    nodesep=0.8;
+    ranksep=1.0;
+    margin="0.5";
+
+    node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11];
+    edge [fontname="Helvetica", fontsize=10, color="#444444"];
+
+    nominatim [
+        label="Nominatim\n(Geocoding)",
+        shape=box, style="rounded,filled,dashed",
+        fillcolor="#F5F5F5", color="#999999"
+    ];
+    openweather [
+        label="OpenWeatherMap\n(Weather forecasts)",
+        shape=box, style="rounded,filled,dashed",
+        fillcolor="#F5F5F5", color="#999999"
+    ];
+    booking [
+        label="Booking.com\n(Hotel listings)\n(Scrapy + Playwright)",
+        shape=box, style="rounded,filled,dashed",
+        fillcolor="#F5F5F5", color="#999999"
+    ];
+
+    subgraph cluster_lake {
+        label=<<B>Data Lake (AWS S3)</B>>;
+        style="rounded,filled";
+        fillcolor="#E8F1FB";
+        color="#3B7DD8";
+        fontcolor="#1F4E8C";
+        fontname="Helvetica";
+        fontsize=12;
+        margin=14;
+
+        raw [
+            label="raw/ (CSV)\ncoordinates + weather + hotels",
+            fillcolor="#CFE2F8", color="#3B7DD8"
+        ];
+        processed [
+            label="processed/ (CSV)\nScored cities + deduplicated hotels",
+            fillcolor="#A9CDF2", color="#3B7DD8"
+        ];
+        final [
+            label="final/ (CSV)\nTop-5 destinations + Top-20 hotels",
+            fillcolor="#82B7EB", color="#3B7DD8"
+        ];
+
+        raw -> processed [label="score + clean"];
+        processed -> final [label="merge"];
+    }
+
+    subgraph cluster_dw {
+        label=<<B>Data Warehouse (PostgreSQL / NeonDB)</B>>;
+        style="rounded,filled";
+        fillcolor="#E8F5EC";
+        color="#2E8B57";
+        fontcolor="#1F5E3B";
+        fontname="Helvetica";
+        fontsize=12;
+        margin=14;
+
+        destinations [
+            fillcolor="#C7E8D2", color="#2E8B57",
+            label="destinations\n(5 rows)"
+        ];
+        hotels [
+            fillcolor="#C7E8D2", color="#2E8B57",
+            label="hotels\n(20 rows)"
+        ];
+
+        destinations -> hotels [label="1 : N", arrowhead=crow, color="#2E8B57", fontcolor="#1F5E3B"];
+    }
+
+    dashboard [
+        label="Streamlit Dashboard",
+        fillcolor="#FFF4D6", color="#C99A2E"
+    ];
+
+    nominatim -> raw [label="ingest", style=dashed];
+    openweather -> raw [label="ingest", style=dashed];
+    booking -> raw [label="ingest", style=dashed];
+    final -> destinations [label="ETL load", color="#C0392B", fontcolor="#C0392B", penwidth=1.6];
+    destinations -> dashboard [label="SQL read", style=dashed];
+    hotels -> dashboard [style=dashed];
+
+    subgraph cluster_legend {
+        label="Legend";
+        style="rounded,dashed";
+        color="#999999";
+        fontcolor="#555555";
+        fontname="Helvetica";
+        fontsize=10;
+
+        legend_dl [label="Data Lake zone (S3)", fillcolor="#CFE2F8", color="#3B7DD8", fontsize=9];
+        legend_dw [label="Data Warehouse table", fillcolor="#C7E8D2", color="#2E8B57", fontsize=9];
+        legend_app [label="Consumer (dashboard)", fillcolor="#FFF4D6", color="#C99A2E", fontsize=9];
+
+        legend_dl -> legend_dw [style=invis];
+        legend_dw -> legend_app [style=invis];
+    }
+}
