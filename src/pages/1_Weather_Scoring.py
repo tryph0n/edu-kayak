@@ -86,6 +86,7 @@ def seasonal_weight_for_day(target_day: int, season_name: str) -> float:
 
 
 st.title("Weather Scoring System")
+st.caption("Weather data: [OpenWeather](https://openweathermap.org/), ODbL licence.")
 
 st.markdown("""
 Our scoring system uses **Gaussian curves** to evaluate the weather quality
@@ -145,7 +146,7 @@ fig_temp.update_layout(
     legend=dict(yanchor="top", y=0.99, xanchor="right", x=0.99),
 )
 
-st.plotly_chart(fig_temp, width='stretch')
+st.plotly_chart(fig_temp, width="stretch")
 
 distance_50_pct = TEMP_SIGMA * math.sqrt(2 * math.log(2))
 
@@ -219,7 +220,7 @@ fig_seasonal.update_layout(
     legend=dict(yanchor="top", y=0.99, xanchor="right", x=0.99),
 )
 
-st.plotly_chart(fig_seasonal, width='stretch')
+st.plotly_chart(fig_seasonal, width="stretch")
 
 half_transition = TRANSITION_DAYS / 2
 st.markdown(f"""
@@ -310,7 +311,7 @@ fig_transition.update_layout(
     legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01),
 )
 
-st.plotly_chart(fig_transition, width='stretch')
+st.plotly_chart(fig_transition, width="stretch")
 
 st.markdown(f"""
 **Transition detail**:
@@ -382,7 +383,7 @@ fig_weights.update_layout(
     legend=dict(yanchor="top", y=0.99, xanchor="right", x=0.99),
 )
 
-st.plotly_chart(fig_weights, width='stretch')
+st.plotly_chart(fig_weights, width="stretch")
 
 st.markdown(f"""
 **Observations**:
