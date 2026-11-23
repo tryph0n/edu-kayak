@@ -93,10 +93,14 @@ def main():
             stats.get("downloader/exception_count", 0),
         )
         if "playwright/page_method/timeout_count" in stats:
-            logger.info("playwright timeouts: %s", stats["playwright/page_method/timeout_count"])
+            logger.info(
+                "playwright timeouts: %s", stats["playwright/page_method/timeout_count"]
+            )
 
         if not os.path.exists(temp_csv_path) or os.path.getsize(temp_csv_path) == 0:
-            raise RuntimeError("scraping produced no items. check logs/scrapy.log for details.")
+            raise RuntimeError(
+                "scraping produced no items. check logs/scrapy.log for details."
+            )
 
         logger.info(f"Loading scraped data from {temp_csv_path}...")
         df_hotels = pd.read_csv(temp_csv_path)

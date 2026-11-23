@@ -165,17 +165,21 @@ class GeocodingClient:
             hotel_name = hotel.get("hotel_name", "Unknown")
 
             if not address:
-                logger.warning(f"No address for hotel '{hotel_name}', skipping geocoding")
+                logger.warning(
+                    f"No address for hotel '{hotel_name}', skipping geocoding"
+                )
                 results.append({**hotel, "latitude": None, "longitude": None})
                 continue
 
             try:
-                logger.info(f"Geocoding hotel {i+1}/{len(hotels_data)}: {hotel_name}")
+                logger.info(f"Geocoding hotel {i + 1}/{len(hotels_data)}: {hotel_name}")
                 coords = self.geocode_address(address, city=city_name)
 
                 if coords:
                     results.append({**hotel, **coords})
-                    logger.info(f"Geocoded {hotel_name}: ({coords['latitude']:.6f}, {coords['longitude']:.6f})")
+                    logger.info(
+                        f"Geocoded {hotel_name}: ({coords['latitude']:.6f}, {coords['longitude']:.6f})"
+                    )
                 else:
                     logger.warning(f"Address not found for hotel '{hotel_name}'")
                     results.append({**hotel, "latitude": None, "longitude": None})
