@@ -4,7 +4,7 @@ digraph KayakSources {
     fontname="Helvetica";
     fontsize=14;
     labelloc="t";
-    label=<<B>External Data Sources &amp; GDPR Posture</B>>;
+    label=<<B>External Data Sources &amp; Safeguards</B>>;
     nodesep=0.8;
     ranksep=1.0;
     margin="0.5";
@@ -54,18 +54,23 @@ digraph KayakSources {
             fillcolor="#CFE2F8", color="#3B7DD8"
         ];
         booking_spider [
-            label=<<B>BookingSpider</B>>,
+            label=<<B>BookingPlaywrightSpider</B>>,
             fillcolor="#CFE2F8", color="#3B7DD8"
         ];
     }
 
     s3_raw [
-        label=<<B>S3 Data Lake</B><BR/>Raw zone>,
+        label=<<B>S3 Data Lake</B><BR/>Raw zone<BR/><FONT POINT-SIZE="9">coordinates.csv</FONT>>,
         shape=cylinder, fillcolor="#CFE9D7", color="#2E8B57", fontcolor="#1F5E3B"
     ];
 
-    subgraph cluster_rgpd {
-        label=<<B>GDPR Safeguards</B>>;
+    s3_processed [
+        label=<<B>S3 Data Lake</B><BR/>Processed zone<BR/><FONT POINT-SIZE="9">weather_scored.csv<BR/>top5_destinations.csv<BR/>hotels_top5.csv</FONT>>,
+        shape=cylinder, fillcolor="#A9D6B8", color="#2E8B57", fontcolor="#1F5E3B"
+    ];
+
+    subgraph cluster_safeguards {
+        label=<<B>Safeguards</B>>;
         style="rounded,filled";
         fillcolor="#E8F5EC";
         color="#2E8B57";
@@ -74,34 +79,35 @@ digraph KayakSources {
         fontsize=12;
         margin=14;
 
-        rgpd_pii [
-            label="Public data only",
+        safeguard_scope [
+            label="Listing fields only;\nno guest or reviewer data",
             fillcolor="#C7E8D2", color="#2E8B57"
         ];
-        rgpd_rate [
-            label="Rate limiting",
+        safeguard_rate [
+            label="Rate limiting: 3 s Booking.com,\n1 s Nominatim and OpenWeatherMap",
             fillcolor="#C7E8D2", color="#2E8B57"
         ];
-        rgpd_ua [
-            label="Custom User-Agent",
-            fillcolor="#C7E8D2", color="#2E8B57"
-        ];
-        rgpd_robots [
-            label="robots.txt compliance",
+        safeguard_ua [
+            label="Identifying User-Agent\n(Nominatim)",
             fillcolor="#C7E8D2", color="#2E8B57"
         ];
 
-        rgpd_pii -> rgpd_rate [style=invis];
-        rgpd_rate -> rgpd_ua [style=invis];
-        rgpd_ua -> rgpd_robots [style=invis];
+        safeguard_scope -> safeguard_rate [style=invis];
+        safeguard_rate -> safeguard_ua [style=invis];
     }
+
+    robots_note [
+        label="Note: ROBOTSTXT_OBEY is disabled in this educational setup\nand the scraper sends a generic browser User-Agent;\nthis is not a recommended practice.",
+        shape=note, fillcolor="#FDE2DF", color="#B23A2E", fontcolor="#7A2219"
+    ];
 
     nominatim   -> geo_client     [label="REST API"];
     openweather -> weather_client [label="REST API"];
     booking     -> booking_spider [label="HTML scraping"];
 
     geo_client     -> s3_raw [color="#2E8B57"];
-    weather_client -> s3_raw [color="#2E8B57"];
-    booking_spider -> s3_raw [color="#2E8B57"];
+    weather_client -> s3_processed [color="#2E8B57"];
+    booking_spider -> s3_processed [color="#2E8B57"];
+    booking_spider -> robots_note [style=dashed, arrowhead=none, color="#B23A2E"];
 
 }
