@@ -10,9 +10,9 @@ help:
 	@echo "  make setup-scraping   Install Playwright browsers (required once before scraping)"
 	@echo "  make test             Run unit tests"
 	@echo "  make test-integration Run integration tests (real API calls)"
-	@echo "  make lint             Run flake8 linter"
+	@echo "  make lint             Run ruff lint and format checks"
 	@echo "  make weather          Run weather pipeline and generate Top-5 destinations"
-	@echo "  make scrape-hotels    Scrape hotels from Top-5 destinations (requires 'make weather' first)"
+	@echo "  make scrape-hotels    Scrape hotels from Top-5 destinations (requires 'make weather' first; asks for confirmation, CONFIRM=yes skips it)"
 	@echo "  make merge-data       Merge weather + hotels data and generate Top-20 final recommendations"
 	@echo "  make etl              Run ETL pipeline: S3 → PostgreSQL NeonDB (requires 'make merge-data' first)"
 	@echo "  make verify-db        Verify database integrity after ETL (requires 'make etl' first)"
@@ -26,7 +26,7 @@ help:
 
 setup:
 	@echo "Syncing dependencies with uv..."
-	$(UV) sync --extra dev --extra scraping
+	$(UV) sync --extra scraping
 	@if [ ! -f .env ]; then \
 		echo "Creating .env from template..."; \
 		cp .env.template .env; \
@@ -65,8 +65,9 @@ test-integration:
 	$(UV) run pytest tests/ -v -s -m "integration"
 
 lint:
-	@echo "Running flake8..."
-	$(UV) run flake8 src/ tests/
+	@echo "Running ruff..."
+	$(UV) run ruff check .
+	$(UV) run ruff format --check .
 
 weather:
 	@if [ ! -f .env ]; then \
@@ -84,6 +85,10 @@ scrape-hotels:
 		echo "Error: .env file not found"; \
 		echo "Run 'make setup' first and configure your .env"; \
 		exit 1; \
+	fi
+	@if [ "$(CONFIRM)" != "yes" ]; then \
+		echo "This runs the Booking.com scraper (educational use only, see README.md)."; \
+		read -p "Are you sure? Type 'yes' to confirm: " confirm && [ "$$confirm" = "yes" ] || (echo "Aborted."; exit 1); \
 	fi
 	@echo "Scraping hotels from Top-5 destinations..."
 	@echo "Note: This requires 'make weather' to have been run first."
