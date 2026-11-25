@@ -16,11 +16,11 @@ from src.settings import settings
 
 
 st.set_page_config(
-    page_title="Kayak Travel Recommender",
+    page_title="Weather Travel Recommender",
     layout="wide",
 )
 
-st.title("Kayak Travel Recommender Dashboard")
+st.title("Weather Travel Recommender Dashboard")
 st.markdown("Discover the best destinations and hotels in France based on weather data")
 
 
