@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "kayak-travel-recommender"
+name = "weather-travel-recommender"
 version = "0.1.0"
 description = "Travel destination recommender based on weather data"
 authors = [{name = "Samy Saad"}]
