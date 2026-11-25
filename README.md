@@ -23,7 +23,7 @@
 > User-Agent; this is not a recommended practice.
 
 ![Python](https://img.shields.io/badge/python-3.12-blue)
-[![CI](https://github.com/tryph0n/edu-kayak/actions/workflows/ci.yml/badge.svg)](https://github.com/tryph0n/edu-kayak/actions/workflows/ci.yml)
+[![CI](https://github.com/tryph0n/weather-travel-recommender/actions/workflows/ci.yml/badge.svg)](https://github.com/tryph0n/weather-travel-recommender/actions/workflows/ci.yml)
 
 # Kayak Travel Recommender
 > Data pipeline that recommends travel destinations in France based on weather forecasts, hotel scraping, and adaptive Gaussian scoring -- served through an interactive Streamlit dashboard.

@@ -29,7 +29,7 @@ scraping = [
 ]
 
 [project.urls]
-Repository = "https://github.com/tryph0n/edu-kayak"
+Repository = "https://github.com/tryph0n/weather-travel-recommender"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
