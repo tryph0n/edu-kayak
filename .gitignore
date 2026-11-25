@@ -24,8 +24,6 @@ venv/
 ENV/
 env/
 
-.python-version
-
 .env
 
 .pytest_cache/
@@ -45,8 +43,10 @@ Thumbs.db
 
 *.json
 
+data/output/
+db/hotels_warehouse.sql
+
 01-Plan_your_trip_with_Kayak.ipynb
-docs/
 .doc/
 *.html
 SUIVI_PROJET.md

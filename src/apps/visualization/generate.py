@@ -32,7 +32,9 @@ def generate_all_maps():
         os.makedirs("outputs", exist_ok=True)
         logger.info("Generating visualizations...")
 
-        logger.info(f"[1/2] Generating Top-{settings.top_n_destinations} Destinations map...")
+        logger.info(
+            f"[1/2] Generating Top-{settings.top_n_destinations} Destinations map..."
+        )
         fig_dest = create_top5_map()
         fig_dest.write_html("outputs/top5_destinations.html")
         logger.info("Saved: outputs/top5_destinations.html")
@@ -43,7 +45,9 @@ def generate_all_maps():
         fig_hotels.write_html("outputs/top20_hotels.html")
         logger.info("Saved: outputs/top20_hotels.html")
 
-        logger.info("All visualizations generated successfully. Files saved in: outputs/")
+        logger.info(
+            "All visualizations generated successfully. Files saved in: outputs/"
+        )
 
         return True
 

@@ -139,7 +139,7 @@ else:
 
 try:
     fig_destinations = create_top5_map()
-    st.plotly_chart(fig_destinations, width='stretch')
+    st.plotly_chart(fig_destinations, width="stretch")
 except Exception as e:
     st.error(f"Error generating destinations map: {e}")
 
@@ -147,7 +147,7 @@ st.header("Top Hotels")
 
 try:
     fig_hotels_map = create_hotels_map()
-    st.plotly_chart(fig_hotels_map, width='stretch')
+    st.plotly_chart(fig_hotels_map, width="stretch")
 except Exception as e:
     st.error(f"Error generating hotels map: {e}")
 
@@ -179,4 +179,6 @@ else:
     st.info("No hotels data available")
 
 st.markdown("---")
-st.markdown("Data sources: Nominatim (geocoding) + OpenWeatherMap (forecasts) + Booking.com via Scrapy/Playwright (hotels) | Pipeline: Data Lake (S3) -> Data Warehouse (PostgreSQL) | Built with Streamlit")
+st.markdown(
+    "Data sources: Nominatim (geocoding) + OpenWeatherMap (forecasts) + Booking.com via Scrapy/Playwright (hotels) | Pipeline: Data Lake (S3) -> Data Warehouse (PostgreSQL) | Built with Streamlit"
+)

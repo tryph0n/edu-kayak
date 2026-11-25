@@ -48,7 +48,9 @@ class BookingPlaywrightSpider(scrapy.Spider):
         city_name = response.meta.get("city_name")
         all_cards = response.css('[data-testid="property-card"]')
         hotels = [c for c in all_cards if c.css('[data-testid="review-score"]')]
-        hotels = sorted(hotels, key=self._extract_card_score, reverse=True)[: self.max_hotels]
+        hotels = sorted(hotels, key=self._extract_card_score, reverse=True)[
+            : self.max_hotels
+        ]
         self.logger.info(f"Found {len(hotels)} hotels for {city_name}")
 
         for hotel in hotels:
@@ -128,7 +130,7 @@ class BookingPlaywrightSpider(scrapy.Spider):
         yield {
             "city_name": city_name,
             "hotel_name": hotel_name,
-            "url": response.url,
+            "url": response.url.split("?")[0],
             "score": str(score) if score else None,
             "address": address,
             "description": description,

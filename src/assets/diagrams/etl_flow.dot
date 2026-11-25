@@ -41,7 +41,7 @@ digraph KayakEtlFlow {
     ];
 
     step2 [
-        label=<<B>2. make scrape</B><BR/>Scrape hotels for top 5 destinations>,
+        label=<<B>2. make scrape-hotels</B><BR/>Scrape hotels for top 5 destinations>,
         fillcolor="#CFE2F8", color="#3B7DD8"
     ];
 
@@ -52,7 +52,7 @@ digraph KayakEtlFlow {
     ];
 
     step3 [
-        label=<<B>3. make merge</B><BR/>Merge scored cities + hotels into recommendations>,
+        label=<<B>3. make merge-data</B><BR/>Merge scored cities + hotels into recommendations>,
         fillcolor="#CFE2F8", color="#3B7DD8"
     ];
 
@@ -95,6 +95,8 @@ digraph KayakEtlFlow {
     step3 -> s3_final [label="write"];
 
     s3_final -> step4 [label="read"];
+
+    nominatim -> step4 [label="hotel\ngeocoding", style=dashed];
 
     step4 -> postgres [label="load", color="#C0392B", fontcolor="#C0392B", penwidth=1.6];
 

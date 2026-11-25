@@ -2,7 +2,7 @@
 
 This page consolidates the three architecture diagrams (sources, architecture,
 ETL flow) with the textual context mirrored from the README, intended for the
-certification jury.
+reader.
 """
 
 from pathlib import Path
@@ -30,22 +30,26 @@ st.markdown(
 )
 
 
-st.header("1. Sources & Data Privacy")
+st.header("1. Sources & Safeguards")
 
 st.markdown("Three external data sources feed the pipeline.")
 
 st.graphviz_chart(load_dot("sources.dot"))
 
 st.markdown("""
-**RGPD / Privacy safeguards applied to the pipeline sources:**
+**Safeguards applied to the pipeline sources:**
 
 | Safeguard | Applies to | Detail |
 |---|---|---|
-| Public data only | All sources | No personal data collected or stored |
-| Rate limiting | GeocodingClient, WeatherClient, BookingSpider | Respectful API/site usage with enforced delays |
-| Custom User-Agent | GeocodingClient, BookingSpider | Requests identify the application |
-| robots.txt compliance | BookingSpider | Web scraping follows site directives |
+| Listing fields only; no guest or reviewer data | BookingPlaywrightSpider | Hotel name, URL, score, address, description |
+| Rate limiting | GeocodingClient, WeatherClient, BookingPlaywrightSpider | 3-second delay on Booking.com, 1-second delay on Nominatim and OpenWeatherMap |
+| Identifying User-Agent (Nominatim) | GeocodingClient | Nominatim requests identify the application |
 """)
+
+st.warning(
+    "`ROBOTSTXT_OBEY` is disabled in this educational setup and the scraper "
+    "sends a generic browser User-Agent; this is not a recommended practice."
+)
 
 st.subheader("Sources")
 st.markdown("""
@@ -57,14 +61,12 @@ st.markdown("""
   scraped from the Top-5 destinations using Scrapy + Playwright.
 """)
 
-st.subheader("Data Privacy")
+st.subheader("Safeguards")
 st.markdown(
-    "Only publicly available data is collected -- no personal data, no user "
-    "tracking, no cookies. Rate limiting is enforced on all external sources: "
-    "3-second delay on Booking.com, 1-second delay on Nominatim. "
-    "`ROBOTSTXT_OBEY = False` is set for Booking.com; this is justified by the "
-    "academic context (certification project, no redistribution or commercial "
-    "use) and compensated by strict rate limiting."
+    "Listing fields only; no guest or reviewer data. Rate limiting is enforced "
+    "on all external sources: 3-second delay on Booking.com, 1-second delay on "
+    "Nominatim and OpenWeatherMap. Only the Nominatim requests send an "
+    "identifying User-Agent. Scraped data is not committed to the repository."
 )
 
 
@@ -76,7 +78,7 @@ st.graphviz_chart(load_dot("architecture.dot"))
 
 st.markdown(
     "This project implements Data Lake and Data Warehouse patterns at "
-    "certification scale (~35 cities, CSV-based). The patterns are genuine; "
+    "training-course scale (~35 cities, CSV-based). The patterns are genuine; "
     "the scale is intentional. The architecture could evolve to "
     "production-grade tooling (Parquet/Delta Lake for the lake, "
     "Redshift/BigQuery for the warehouse) without changing the pipeline logic."
@@ -116,8 +118,9 @@ st.markdown(
 )
 
 st.markdown(
-    "**Flow:** APIs/Scraping -> S3 `raw/` -> Processing -> S3 `processed/` -> "
-    "Merging -> S3 `final/` -> ETL -> PostgreSQL -> Dashboard"
+    "**Flow:** Nominatim -> S3 `raw/` (coordinates) ; "
+    "Weather scoring + Hotel scraping -> S3 `processed/` ; "
+    "Merge -> S3 `final/` ; ETL -> PostgreSQL -> Dashboard"
 )
 
 
@@ -142,4 +145,6 @@ The `make all` target runs the full pipeline (weather -> scrape -> merge -> etl
 """)
 
 st.markdown("---")
-st.markdown("Architecture overview | Kayak Travel Recommender | Certification Bloc 1")
+st.markdown(
+    "Architecture overview | Kayak Travel Recommender | Training course, Bloc 1"
+)

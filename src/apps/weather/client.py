@@ -6,6 +6,7 @@ available with free API keys. The 3.0 API requires a paid subscription.
 
 import logging
 import math
+import time
 from datetime import datetime
 import requests
 
@@ -22,6 +23,7 @@ from src.settings.weather_scoring import (
 
 logger = logging.getLogger(__name__)
 
+
 class WeatherClient:
     """
     Client for OpenWeatherMap 2.5 One Call API (free tier).
@@ -37,11 +39,31 @@ class WeatherClient:
 
     def get_score_for_row(self, row):
         try:
-            weather_data = self.get_weather(row['latitude'], row['longitude'])
+            weather_data = self.get_weather(row["latitude"], row["longitude"])
             return self.compute_weather_score(weather_data)
         except Exception as e:
             logger.warning("Failed to get weather score for row: %s", e, exc_info=True)
             return None
+
+    def get_scores_batch(self, rows, delay: float = 1.0):
+        """Get weather scores for multiple rows with rate limiting.
+
+        Args:
+            rows: List of rows with 'latitude' and 'longitude' keys.
+            delay: Delay between requests in seconds (default: 1.0).
+
+        Returns:
+            list: One score dict per row, in the input order (None if it failed).
+        """
+        results = []
+
+        for i, row in enumerate(rows):
+            results.append(self.get_score_for_row(row))
+
+            if i < len(rows) - 1:
+                time.sleep(delay)
+
+        return results
 
     def get_weather(self, latitude: float, longitude: float):
         """
@@ -75,8 +97,7 @@ class WeatherClient:
 
         except requests.RequestException as e:
             raise requests.RequestException(
-                f"Failed to fetch weather for {latitude}, {longitude}: "
-                f"{str(e)}"
+                f"Failed to fetch weather for {latitude}, {longitude}: {str(e)}"
             ) from e
 
     def _get_season_weight(self, target_date: datetime) -> dict[str, float]:
@@ -98,16 +119,16 @@ class WeatherClient:
         target_ordinal = target_date.toordinal()
         half_transition = TRANSITION_DAYS / 2
 
-        season_order = ['winter', 'spring', 'summer', 'autumn']
-        weights = {'winter': 0.0, 'spring': 0.0, 'summer': 0.0, 'autumn': 0.0}
+        season_order = ["winter", "spring", "summer", "autumn"]
+        weights = {"winter": 0.0, "spring": 0.0, "summer": 0.0, "autumn": 0.0}
 
         for i, season_name in enumerate(season_order):
             config = SEASONS[season_name]
-            end_month, end_day = config['end']
+            end_month, end_day = config["end"]
 
             end_date = datetime(target_date.year, end_month, end_day)
 
-            if season_name == 'winter':
+            if season_name == "winter":
                 if target_date.month >= 12:
                     # December: winter ends next year
                     end_date = datetime(target_date.year + 1, end_month, end_day)
@@ -138,14 +159,14 @@ class WeatherClient:
 
         for season_name in season_order:
             config = SEASONS[season_name]
-            start_month, start_day = config['start']
-            end_month, end_day = config['end']
+            start_month, start_day = config["start"]
+            end_month, end_day = config["end"]
 
             start_date = datetime(target_date.year, start_month, start_day)
             end_date = datetime(target_date.year, end_month, end_day)
 
             # Handle winter year wrap
-            if season_name == 'winter':
+            if season_name == "winter":
                 if target_date.month >= 12:
                     start_date = datetime(target_date.year, start_month, start_day)
                     end_date = datetime(target_date.year + 1, end_month, end_day)
@@ -162,7 +183,11 @@ class WeatherClient:
             end_ordinal = end_date.toordinal()
 
             # -1 for inclusive bounds, avoids leap-year off-by-one gap
-            if start_ordinal + half_transition - 1 <= target_ordinal <= end_ordinal - half_transition:
+            if (
+                start_ordinal + half_transition - 1
+                <= target_ordinal
+                <= end_ordinal - half_transition
+            ):
                 weights[season_name] = PLATEAU_WEIGHT
                 return weights
 
@@ -182,7 +207,7 @@ class WeatherClient:
         Returns:
             float: Score in [0, 1] range.
         """
-        return math.exp(-((temp - optimal_temp) ** 2) / (2 * TEMP_SIGMA ** 2))
+        return math.exp(-((temp - optimal_temp) ** 2) / (2 * TEMP_SIGMA**2))
 
     def compute_weather_score(self, weather_data: dict, target_date: datetime = None):
         """Calculate weather score using plateau seasonal weighting.
@@ -231,9 +256,9 @@ class WeatherClient:
         weights = SEASONAL_WEIGHTS[dominant_season]
 
         final_score = (
-            temp_score_total * weights['temperature'] +
-            rain_score * weights['rain'] +
-            cloud_score * weights['clouds']
+            temp_score_total * weights["temperature"]
+            + rain_score * weights["rain"]
+            + cloud_score * weights["clouds"]
         )
 
         active_seasons = {s: w for s, w in season_weights.items() if w > 0}
