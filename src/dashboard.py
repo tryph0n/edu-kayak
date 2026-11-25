@@ -1,4 +1,4 @@
-"""Streamlit dashboard for Kayak Travel Recommender.
+"""Streamlit dashboard for Weather Travel Recommender.
 
 This dashboard provides an interactive read-only interface to visualize
 travel recommendations from PostgreSQL database.
