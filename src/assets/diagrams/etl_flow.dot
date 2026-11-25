@@ -4,7 +4,7 @@ digraph KayakEtlFlow {
     fontname="Helvetica";
     fontsize=14;
     labelloc="t";
-    label=<<B>Kayak Travel Recommender -- ETL Pipeline</B>>;
+    label=<<B>Weather Travel Recommender -- ETL Pipeline</B>>;
     nodesep=0.8;
     ranksep=1.0;
     margin="0.5";

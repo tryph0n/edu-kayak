@@ -1,7 +1,7 @@
 # S3 Storage Structure
 
 ## Overview
-This document describes the unified S3 storage structure for the Kayak Travel Recommender project.
+This document describes the unified S3 storage structure for the Weather Travel Recommender project.
 
 ## Directory Structure
 

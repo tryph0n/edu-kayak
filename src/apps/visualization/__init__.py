@@ -1,4 +1,4 @@
-"""Visualization module for Kayak Travel Recommender.
+"""Visualization module for Weather Travel Recommender.
 
 This module provides interactive Plotly maps for:
 - Top N destinations by weather score (configurable)

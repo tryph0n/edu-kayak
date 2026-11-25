@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "kayak-travel-recommender"
+name = "weather-travel-recommender"
 version = "0.1.0"
 description = "Travel destination recommender based on weather data"
 authors = [{name = "Samy Saad"}]
@@ -29,7 +29,7 @@ scraping = [
 ]
 
 [project.urls]
-Repository = "https://github.com/tryph0n/edu-kayak"
+Repository = "https://github.com/tryph0n/weather-travel-recommender"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]

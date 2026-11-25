@@ -146,5 +146,5 @@ The `make all` target runs the full pipeline (weather -> scrape -> merge -> etl
 
 st.markdown("---")
 st.markdown(
-    "Architecture overview | Kayak Travel Recommender | Training course, Bloc 1"
+    "Architecture overview | Weather Travel Recommender | Training course, Bloc 1"
 )

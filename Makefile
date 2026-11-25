@@ -3,7 +3,7 @@
 UV := uv
 
 help:
-	@echo "Kayak Travel Recommender - Available commands:"
+	@echo "Weather Travel Recommender - Available commands:"
 	@echo ""
 	@echo "  make all              Run complete pipeline: check-settings → weather → scrape → merge → etl → verify-db → visualize"
 	@echo "  make setup            Setup project (installs all dependencies)"

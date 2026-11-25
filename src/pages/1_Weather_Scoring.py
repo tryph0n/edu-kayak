@@ -501,4 +501,6 @@ st.markdown(f"""
 """)
 
 st.markdown("---")
-st.markdown("Plateau-based scoring system with transitions | Kayak Travel Recommender")
+st.markdown(
+    "Plateau-based scoring system with transitions | Weather Travel Recommender"
+)
